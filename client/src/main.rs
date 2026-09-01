@@ -18,16 +18,27 @@ impl HighSpeedRAMClient {
         
         // Optimize socket for bulk data transfer
         stream.set_nodelay(true)?;
+        
         #[cfg(unix)]
         {
             use std::os::unix::io::AsRawFd;
             unsafe {
                 let fd = stream.as_raw_fd();
                 let buf_size: i32 = 256 * 1024; // 256KB send/recv buffer
-                libc::setsockopt(fd, libc::SOL_SOCKET, libc::SO_SNDBUF, 
-                    &buf_size as *const _ as *const libc::c_void, std::mem::size_of::<i32>() as libc::socklen_t);
-                libc::setsockopt(fd, libc::SOL_SOCKET, libc::SO_RCVBUF,
-                    &buf_size as *const _ as *const libc::c_void, std::mem::size_of::<i32>() as libc::socklen_t);
+                libc::setsockopt(
+                    fd,
+                    libc::SOL_SOCKET,
+                    libc::SO_SNDBUF,
+                    &buf_size as *const _ as *const libc::c_void,
+                    std::mem::size_of::<i32>() as libc::socklen_t,
+                );
+                libc::setsockopt(
+                    fd,
+                    libc::SOL_SOCKET,
+                    libc::SO_RCVBUF,
+                    &buf_size as *const _ as *const libc::c_void,
+                    std::mem::size_of::<i32>() as libc::socklen_t,
+                );
             }
         }
         
