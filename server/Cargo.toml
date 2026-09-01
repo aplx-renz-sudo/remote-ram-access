@@ -1,13 +1,10 @@
 [package]
 name = "ram-server"
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
 
 [dependencies]
 tokio = { version = "1.35", features = ["full"] }
-tonic = "0.10"
-prost = "0.12"
-prost-types = "0.12"
 tracing = "0.1"
 tracing-subscriber = "0.3"
 sha2 = "0.10"
@@ -18,7 +15,18 @@ serde_json = "1.0"
 dashmap = "5.5"
 bytes = "1.5"
 tracing-appender = "0.2"
+mmap = "0.1.1"
+nix = { version = "0.27", features = ["mman"] }
+libc = "0.2"
+quicktcp = "0.1"
+zstd = "0.13"
+jumbo = "0.1"
 
 [[bin]]
 name = "ram-server"
 path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
