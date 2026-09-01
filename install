@@ -1,0 +1,26 @@
+#!/bin/bash
+# Uninstall Remote RAM Access
+
+if [ "$EUID" -ne 0 ]; then 
+    echo "⚠️  Requires sudo: sudo ./uninstall"
+    exit 1
+fi
+
+echo "🗑️  Removing Remote RAM Access..."
+echo ""
+
+systemctl stop remote-ram-server.service 2>/dev/null || true
+systemctl stop remote-ram-client.service 2>/dev/null || true
+sleep 1
+
+systemctl disable remote-ram-server.service 2>/dev/null || true
+systemctl disable remote-ram-client.service 2>/dev/null || true
+
+rm -f /etc/systemd/system/remote-ram-server.service
+rm -f /etc/systemd/system/remote-ram-client.service
+rm -rf /opt/remote-ram-access
+
+systemctl daemon-reload
+
+echo "✅ Uninstalled!"
+echo ""
