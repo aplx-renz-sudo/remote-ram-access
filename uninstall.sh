@@ -1,10 +1,5 @@
 #!/bin/bash
-# Uninstall script for Remote RAM Access System
-
-set -e
-
-echo "🗑️  Remote RAM Access System - Uninstallation"
-echo "="*50
+# Uninstall script - removes all traces
 
 if [ "$EUID" -ne 0 ]; then 
     echo "⚠️  This script requires sudo"
@@ -12,34 +7,29 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+echo "🗑️  Uninstalling Remote RAM Access..."
+echo ""
+
 echo "Stopping services..."
-sudo systemctl stop remote-ram-server.service 2>/dev/null || true
-sudo systemctl stop remote-ram-client.service 2>/dev/null || true
+systemctl stop remote-ram-server.service 2>/dev/null || true
+systemctl stop remote-ram-client.service 2>/dev/null || true
+sleep 2
 
 echo "Disabling services..."
-sudo systemctl disable remote-ram-server.service 2>/dev/null || true
-sudo systemctl disable remote-ram-client.service 2>/dev/null || true
+systemctl disable remote-ram-server.service 2>/dev/null || true
+systemctl disable remote-ram-client.service 2>/dev/null || true
 
-echo "Removing systemd services..."
-sudo rm -f /etc/systemd/system/remote-ram-server.service
-sudo rm -f /etc/systemd/system/remote-ram-client.service
+echo "Removing services..."
+rm -f /etc/systemd/system/remote-ram-server.service
+rm -f /etc/systemd/system/remote-ram-client.service
 
-echo "Removing udev rules..."
-sudo rm -f /etc/udev/rules.d/99-remote-ram.rules
-
-echo "Removing log rotation..."
-sudo rm -f /etc/logrotate.d/remote-ram-access
-
-echo "Removing installation directory..."
-sudo rm -rf /opt/remote-ram-access
+echo "Removing installation..."
+rm -rf /opt/remote-ram-access
 
 echo "Reloading systemd..."
-sudo systemctl daemon-reload
-
-echo "Reloading udev..."
-sudo udevadm control --reload-rules
+systemctl daemon-reload
 
 echo ""
 echo "✅ Uninstallation complete!"
-echo "   All services, files, and configurations removed."
+echo "   All services and files removed."
 echo ""
